@@ -22,9 +22,12 @@ $output = [
 $command = $_REQUEST['command'] ?? '';
 
 switch(strtolower($command) {
-    'login':
-        $output = doLogin();
-       break;
+    'auth.login':
+        $output = authLogin();
+        break;
+    'user.read':
+        $output = userRead();
+        break;
     default:
         $output['message'] = 'No valid command specified';
 }
