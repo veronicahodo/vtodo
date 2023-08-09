@@ -7,6 +7,7 @@
 require_once('vcrud.php');
 require_once('vtoken.php');
 require_once('vuser.php');
+require_once('auth.php');
 
 $crud = new VCRUD($DBUSER,$DBPASS,$DBHOST,$DBNAME);
 
@@ -17,19 +18,8 @@ $output = [
   ];
 
 
+
 $command = $_REQUEST['command'] ?? '';
-
-function doLogin() {
-    // handles the login process.
-    // expects:
-    //    username: the users name. 
-    //        [TODO] make this syntax enforceable
-    //    password: the password in plain text
-
-    $username = $_REQUEST['username'] ?? '';
-    $password = $_REQUEST['password'] ?? '';
-    
-}
 
 switch(strtolower($command) {
     'login':
