@@ -2,49 +2,57 @@
 
 // api/task.php
 
-// Handles most of the fuctions related to tasks
+// Handles most of the functions related to tasks
 
 require_once('vcrud.php');
 
-class TASK {
-  private $fields = [
-    'taskId' => 0,
-    'title' => '',
-    'parentId' => 0,
-    'content' => '',
-    'completed' => 0,
-    'archived' => 0
-  ];
-  
-  function __construct($title,$parentId=0,$content='',$completed=0) {
-    
+class Task
+{
+  private $fields;
+
+  private $table = 'tasks';
+
+  public function __construct($title, $parentId = 0, $content = '', $completed = 0)
+  {
+    $this->fields = [
+      'taskId' => 0,
+      'title' => $title,
+      'parentId' => $parentId,
+      'content' => $content,
+      'completed' => $completed,
+      'archived' => 0
+    ];
   }
 
-  function create(VCRUD $c) {
-    $this->fields['taskId'] = $c->create('tasks',$fields);
+  public function create(VCRUD $c)
+  {
+    $this->fields['taskId'] = $c->create($this->table, $this->fields);
   }
 
-  function read($taskId, VCRUD $c) {
-    // very breakable [TODO]
-    $data = $c->read('tasks',[['taskId','=',$taskId]]);
+  public function read($taskId, VCRUD $c)
+  {
+    $data = $c->read($this->table, [['taskId', '=', $taskId]]);
     $this->fields = $data[0];
   }
 
-  function update(VCRUD $c) {
-    $c->update('tasks',$this->fields,[['taskId','=',$this->fields['taskId']]]);
+  public function update(VCRUD $c)
+  {
+    $c->update($this->table, $this->fields, [['taskId', '=', $this->fields['taskId']]]);
   }
 
-  function delete($taskId, VCRUD $c) {
+  public function delete($taskId, VCRUD $c)
+  {
     $this->fields['archived'] = 1;
     $this->update($c);
   }
 
-  function get($field) {
+  public function get($field)
+  {
     return $this->fields[$field];
   }
 
-  function set($field,$value) {
+  public function set($field, $value)
+  {
     $this->fields[$field] = $value;
   }
-
 }
