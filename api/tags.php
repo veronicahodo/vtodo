@@ -17,7 +17,18 @@ class Tag {
         ];
     }
 
-    function create($fields, VCRUD $c) {
-        
+    function create(VCRUD $c) {
+        // this is so fucking wrong on so many levels
+        // [TODO] error checking
+        return [
+            'status'=>'ok',
+            'tagId'=>$c->create($this->table,$fields)
+            ];
+    }
+
+    function read($tagId, VCRUD $c) {
+        return [
+            'status'=>'ok',
+            $c->read
     }
 }
