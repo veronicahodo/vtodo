@@ -7,6 +7,10 @@
 
 // Version 1.0.0
 
+/* Changelog:
+	1.0.1: updated read() to have an optional parameter to use the OR operator rathern than AND
+	1.0.0: Initial fully "working" release
+*/
 class VCRUD
 {
 	private $connection;	// Stores the PDO connection so we don't have to pass it every time
@@ -57,12 +61,16 @@ class VCRUD
 		return $this->connection->lastInsertId();
 	}
 
-	public function read($table, $conditions)
+	public function read($table, $conditions,$orOperand = false)
 	{
 		// reads up to 20000 rows and returns them based on conditions. 
 		// Conditions are formatted [column,operand,value]
 		$strConditions = $this->conditionsToStrings($conditions);
-		$sql = "SELECT * FROM `{$table}` WHERE (" . implode(' AND ', $strConditions) . ") LIMIT " . $this->maxRows;
+		if ($orOperand) {
+			$sql = "SELECT * FROM `{$table}` WHERE (" . implode(' OR ', $strConditions) . ") LIMIT ". $this->maxRows;
+		} else {
+			$sql = "SELECT * FROM `{$table}` WHERE (" . implode(' AND ', $strConditions) . ") LIMIT " . $this->maxRows;
+		}
 		$stmt = $this->connection->prepare($sql);
 		$stmt->execute();
 		$return = [];
