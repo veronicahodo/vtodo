@@ -39,8 +39,41 @@ function authLogin(VCRUD $c)
 }
 
 
-function userRead()
+
+
+function userRead(VCRUD $c)
 {
+    $required = ['userId','token'];
+    // [TODO] Turn the token into a userId
+    if (checkPassed($required)) {
+        $user = new VUSER();
+        $user->load(htmlspecialchars($_REQUEST['userId'],$c));
+        return [
+            'status' => 'ok',
+            'user' => $user
+        ];
+    } else {
+        return [
+            'status' => 'error',
+            'message' => '[user.read] userId required'
+        ];
+    }
+}
+
+
+function userUpdate(VCRUD $c) {
+    $request = ['userId','token'];
+    $fields = ['userId','username'];
+    // [TODO] token shits
+    if (checkPassed($request)) {
+        $user = new VUSER();
+        $user->load(htmlspecialchars
+    } else {
+        return [
+            'status' => 'error',
+            'message' => '[user.update] userId and token required'
+        ];  
+    }
 }
 
 $command = $_REQUEST['command'] ?? '';
@@ -51,6 +84,9 @@ switch (strtolower($command)) {
         break;
     case 'user.read':
         $output = userRead();
+        break;
+    case 'user.update':
+        $output = userUpdate();
         break;
     default:
         $output['message'] = 'No valid command specified';
