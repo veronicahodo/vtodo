@@ -21,11 +21,15 @@ $output = [
 
 // authentication functions [auth.]
 
-function authLogin()
+function authLogin(VCRUD $c)
 {
     $required = ['username', 'password'];
     if (checkPassed($required)) {
-        $token = new VTOKEN();
+        $user = new VUSER();
+        return [
+            'status' => 'ok',
+            'return' => $user->validatePassword(htmlspecialchars($_REQUEST['username']), htmlspecialchars($_REQUEST['password']), $c)
+        ];
     } else {
         return [
             'status' => 'error',
@@ -35,11 +39,15 @@ function authLogin()
 }
 
 
+function userRead()
+{
+}
+
 $command = $_REQUEST['command'] ?? '';
 
 switch (strtolower($command)) {
     case 'auth.login':
-        $output = authLogin();
+        $output = authLogin($crud);
         break;
     case 'user.read':
         $output = userRead();
