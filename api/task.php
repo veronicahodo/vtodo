@@ -46,15 +46,6 @@ class Task
     $this->update($c);
   }
 
-    public function searchByTags($tags, VCRUD $c) {
-        $conditions = [];
-
-        foreach ($tags as $tag) {
-            $conditions = [$tag,'=',
-        }
-        $results = $c->read($this->table,$conditions);
-    }
-
   public function get($field)
   {
     return $this->fields[$field];
