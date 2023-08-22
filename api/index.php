@@ -45,6 +45,34 @@ function authLogin(VCRUD $c)
 
 
 
+function taskCreate(VCRUD $c) {
+    $request = ['title','token'];
+    if (checkPassed($request)) {
+        $token = new VTOKEN();
+        if ($userId = $token->getUserIdFromToken()) {
+            $task = new TASK();
+            $task->set('title',htmlspecialchars($_REQUEST['title'] ?? ''));
+            $task->set('parent',htmlspecialchars($_REQUEST['parent'] ?? 0));
+            $task->set('content',htmlspecialchars($_REQUEST['content'] ?? ''));
+            $task->set('complete',htmlspecialchars($_REQUEST['completed'] ?? 0));
+            $taskFields['archived'] = 0;
+            $task->create($c);
+            assignTask($task->get('taskId'),$userId,$c);
+            return [
+                'status'=>'ok',
+                'taskId'=>$task->get('taskId')
+            ];
+        }
+        
+    } else {
+        return [ 
+            'status'=>'error',
+            'message'=>'[task.create] New tasks must have a title and token'
+        ];
+    }
+    
+}
+
 
 function userRead(VCRUD $c)
 {
@@ -87,6 +115,9 @@ $command = $_REQUEST['command'] ?? '';
 switch (strtolower($command)) {
     case 'auth.login':
         $output = authLogin($crud);
+        break;
+    case 'task.create':
+        $output = taskCreate($crud);
         break;
     case 'user.read':
         $output = userRead($crud);

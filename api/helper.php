@@ -17,3 +17,9 @@ function checkPassed($required)
 
     return $passed;
 }
+
+
+function assignTask($taskId,$userId,VCRUD $c) {
+    $c->create('assignments',['taskId'=>$taskId,'userId'=>$userId]);
+    return true; // [TODO] not make this wrong
+}
