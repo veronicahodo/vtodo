@@ -3,6 +3,7 @@
 // vuser.php
 
 // User management class
+// Version 0.2.2
 
 require_once('vcrud.php');
 
@@ -10,7 +11,7 @@ class VUSER
 {
     private $userId;
     private $username;
-    private $hash;      // sha512 hash of plain text password + salt
+    private $passwordHash;      // sha512 hash of plain text password + salt
     private $salt;
 
 
@@ -18,7 +19,7 @@ class VUSER
     {
         $this->userId = 0;
         $this->username = '';
-        $this->hash = '';
+        $this->passwordHash = '';
         $this->salt = '';
     }
 
@@ -28,7 +29,7 @@ class VUSER
         $this->salt = random_bytes(32);
         $c->create('users', [
             'username' => $username,
-            'hash' => hash('sha512', $password . $this->salt),
+            'passwordHash' => (hash('sha512', $password . $this->salt)),
             'salt' => $this->salt
         ]);
     }
@@ -39,7 +40,7 @@ class VUSER
         if ($data) {
             $this->userId = $data[0]['userId'];
             $this->username = $data[0]['username'];
-            $this->hash = $data[0]['hash'];
+            $this->passwordHash = $data[0]['passwordHash'];
             $this->salt = $data[0]['salt'];
             return $data[0];
         } else {
@@ -52,13 +53,13 @@ class VUSER
         if ($this->userId > 0) {
             $c->create('users', [
                 'username' => $this->username,
-                'hash' => $this->hash,
+                'hash' => $this->passwordHash,
                 'salt' => $this->salt
             ]);
         } else {
             $c->update('users', [
                 'username' => $this->username,
-                'hash' => $this->hash,
+                'hash' => $this->passwordHash,
                 'salt' => $this->salt
             ], [
                 ['userId', '=', $this->userId]
@@ -82,7 +83,7 @@ class VUSER
         // I'm obviously open to suggestions
         $user = $c->read('users', [['username', '=', $username]]);
         if ($user) {
-            if (hash('sha512', $password . $user[0]['salt'])) {
+            if ((hash('sha512', $password . $user[0]['salt'])) === $user[0]['passwordHash']) {
                 return $user[0]['userId'];
             } else {
                 return false;
